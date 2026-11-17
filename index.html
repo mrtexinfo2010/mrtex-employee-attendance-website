@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Employee Attendance Management System</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div>
+        <h1>Employee Attendance System</h1>
+        <p>Daily & Monthly Staff Attendance Tracker</p>
+      </div>
+      <div class="header-actions">
+        <input type="date" id="attendanceDate">
+        <button class="btn btn-primary" onclick="markAllPresent()">Mark All Present</button>
+        <button class="btn btn-success" onclick="exportToCSV()">Export CSV</button>
+      </div>
+    </header>
+
+    <!-- Summary Cards -->
+    <section class="summary-grid">
+      <div class="card">
+        <h3>Total Employees</h3>
+        <p id="totalEmp">0</p>
+      </div>
+      <div class="card present">
+        <h3>Present Today</h3>
+        <p id="presentCount">0</p>
+      </div>
+      <div class="card absent">
+        <h3>Absent Today</h3>
+        <p id="absentCount">0</p>
+      </div>
+      <div class="card late">
+        <h3>Late / Half-Day</h3>
+        <p id="lateCount">0</p>
+      </div>
+    </section>
+
+    <!-- Add Employee Form -->
+    <section class="panel">
+      <h2>Add New Employee</h2>
+      <form id="addEmployeeForm" class="form-row">
+        <input type="text" id="empId" placeholder="Employee ID (e.g. EMP-101)" required>
+        <input type="text" id="empName" placeholder="Employee Full Name" required>
+        <input type="text" id="empRole" placeholder="Designation / Department" required>
+        <button type="submit" class="btn btn-primary">+ Add Employee</button>
+      </form>
+    </section>
+
+    <!-- Daily Attendance Table -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Daily Attendance Sheet (<span id="displayDate"></span>)</h2>
+        <input type="text" id="searchInput" placeholder="Search by name or ID..." onkeyup="renderAttendanceTable()">
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Designation</th>
+              <th>Check-In</th>
+              <th>Check-Out</th>
+              <th>Status</th>
+              <th>Quick Action</th>
+              <th>Remove</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Monthly Report Section -->
+    <section class="panel">
+      <div class="panel-header">
+        <h2>Monthly Attendance Summary</h2>
+        <input type="month" id="reportMonth" onchange="renderMonthlyReport()">
+      </div>
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Employee Name</th>
+              <th>Present</th>
+              <th>Late</th>
+              <th>Half-Day</th>
+              <th>Absent</th>
+              <th>Attendance %</th>
+            </tr>
+          </thead>
+          <tbody id="monthlyReportBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
