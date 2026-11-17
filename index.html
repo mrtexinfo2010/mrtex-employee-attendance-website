@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProAttend — Employee Attendance Dashboard</title>
+  <title>ProAttend — Employee Attendance & Movement System</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
@@ -62,6 +62,14 @@
         </div>
         <div class="kpi-icon">⏰</div>
       </div>
+
+      <div class="kpi-card movement">
+        <div class="kpi-info">
+          <span>Outside (Movement)</span>
+          <h2 id="outsideCount">0</h2>
+        </div>
+        <div class="kpi-icon">🚶</div>
+      </div>
     </section>
 
     <!-- Add New Employee Panel -->
@@ -75,6 +83,43 @@
         <input type="text" id="empRole" placeholder="Designation / Dept" required>
         <button type="submit" class="btn btn-primary">Add Employee</button>
       </form>
+    </section>
+
+    <!-- Employee Movement Log Panel -->
+    <section class="glass-panel movement-panel">
+      <div class="panel-header">
+        <div>
+          <h3>🚶 Employee Movement Register (Out-of-Office Log)</h3>
+          <small class="sub-text">Track official visits, factory trips, or short breaks for <strong id="movementDateDisplay"></strong></small>
+        </div>
+      </div>
+
+      <form id="movementForm" class="modern-form" style="margin-bottom: 18px;">
+        <select id="moveEmpId" required>
+          <option value="">-- Select Employee --</option>
+        </select>
+        <input type="text" id="movePurpose" placeholder="Destination / Purpose (e.g. Client Visit, Bank, Factory)" required>
+        <input type="time" id="moveOutTime" title="Out Time" required>
+        <input type="time" id="moveInTime" title="Return Time (Optional)">
+        <button type="submit" class="btn btn-warning">Log Movement</button>
+      </form>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Employee</th>
+              <th>Destination / Purpose</th>
+              <th>Out Time</th>
+              <th>Return Time</th>
+              <th>Duration</th>
+              <th>Status</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="movementTableBody"></tbody>
+        </table>
+      </div>
     </section>
 
     <!-- Daily Attendance Table -->
@@ -134,6 +179,7 @@
               <th>Late</th>
               <th>Half-Day</th>
               <th>Absent</th>
+              <th>Movements</th>
               <th>Attendance Rate</th>
             </tr>
           </thead>
