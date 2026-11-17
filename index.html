@@ -12,7 +12,6 @@
     <!-- Top Header -->
     <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); color:#ffffff; padding:22px 26px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:22px; box-shadow:0 8px 20px rgba(30,27,75,0.2);">
       <div style="display:flex; align-items:center; gap:14px;">
-        <!-- Logo Image -->
         <img src="logo.jpg" alt="M.R. TEX Logo" style="width:52px; height:52px; object-fit:contain; background:#ffffff; border-radius:10px; padding:3px;">
         <div>
           <h1 style="margin:0; font-size:22px; font-weight:700;">M.R. TEX <span style="font-size:16px; font-weight:400; color:#c7d2fe;">— Employee Attendance</span></h1>
@@ -221,7 +220,7 @@
       return attendanceRecords[date][empId];
     }
 
-    // Add Employee
+    // Add Employee (Permanent across all days)
     document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const id = document.getElementById('empId').value.trim();
@@ -237,11 +236,11 @@
       saveData();
       this.reset();
       renderAll();
-      showToast(`✅ ${name} added!`);
+      showToast(`✅ ${name} registered permanently!`);
     });
 
     function deleteEmployee(id) {
-      if (confirm('Remove this employee?')) {
+      if (confirm('Remove this employee from the system?')) {
         employees = employees.filter(emp => emp.id !== id);
         saveData();
         renderAll();
@@ -309,7 +308,7 @@
       });
       saveData();
       renderAll();
-      showToast('✨ All marked Present!');
+      showToast('✨ All marked Present for today!');
     }
 
     function renderAttendanceTable() {
