@@ -76,10 +76,14 @@
     <!-- Register New Employee -->
     <div style="background:#0f172a; border-radius:12px; padding:24px; margin-bottom:22px; border:1px solid #1e293b; box-shadow:0 4px 15px rgba(0,0,0,0.4);">
       <h3 style="margin:0 0 14px 0; font-size:17px; color:#f9fafb;">➕ Register New Employee</h3>
-      <form id="addEmployeeForm" style="display:flex; gap:14px; flex-wrap:wrap;">
-        <input type="text" id="empId" placeholder="ID (e.g. EMP-104)" required style="flex:1; min-width:200px; padding:11px 15px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:8px; font-size:14px;">
-        <input type="text" id="empName" placeholder="Full Name" required style="flex:2; min-width:220px; padding:11px 15px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:8px; font-size:14px;">
-        <input type="text" id="empRole" placeholder="Designation / Dept" required style="flex:2; min-width:220px; padding:11px 15px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:8px; font-size:14px;">
+      <form id="addEmployeeForm" style="display:flex; gap:14px; flex-wrap:wrap; align-items:center;">
+        <input type="text" id="empId" placeholder="ID (e.g. EMP-104)" required style="flex:1; min-width:160px; padding:11px 15px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:8px; font-size:14px;">
+        <input type="text" id="empName" placeholder="Full Name" required style="flex:2; min-width:200px; padding:11px 15px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:8px; font-size:14px;">
+        <input type="text" id="empRole" placeholder="Designation / Dept" required style="flex:2; min-width:200px; padding:11px 15px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:8px; font-size:14px;">
+        <div style="display:flex; align-items:center; gap:8px; background:#030712; padding:6px 12px; border:1px solid #1e3a8a; border-radius:8px; font-size:13px; color:#94a3b8;">
+          <label for="empPhotoFile">📷 Photo:</label>
+          <input type="file" id="empPhotoFile" accept="image/*" style="color:#f8fafc; font-size:12px; width:180px;">
+        </div>
         <button type="submit" style="background:#2563eb; color:#fff; border:none; padding:11px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">Add Employee</button>
       </form>
     </div>
@@ -154,9 +158,9 @@
 
   <script>
     let employees = JSON.parse(localStorage.getItem('company_employees')) || [
-      { id: 'EMP-01', name: 'Tanvir Ahmed', role: 'Sales Executive' },
-      { id: 'EMP-02', name: 'Nusrat Jahan', role: 'HR Manager' },
-      { id: 'EMP-03', name: 'Rafiul Islam', role: 'Accountant' }
+      { id: 'EMP-01', name: 'Tanvir Ahmed', role: 'Sales Executive', photo: '' },
+      { id: 'EMP-02', name: 'Nusrat Jahan', role: 'HR Manager', photo: '' },
+      { id: 'EMP-03', name: 'Rafiul Islam', role: 'Accountant', photo: '' }
     ];
 
     let attendanceRecords = JSON.parse(localStorage.getItem('company_attendance')) || {};
@@ -183,15 +187,17 @@
       setTimeout(() => { toast.style.display = 'none'; }, 2500);
     }
 
-    function getAvatarColor(name) {
-      const colors = ['#3b82f6', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
-      let hash = 0;
-      for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-      return colors[Math.abs(hash) % colors.length];
-    }
-
-    function getInitials(name) {
-      return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    function getAvatarHTML(emp) {
+      if (emp.photo) {
+        return `<img src="${emp.photo}" alt="${emp.name}" style="width:40px; height:40px; border-radius:50%; object-fit:cover; border:2px solid #3b82f6;">`;
+      } else {
+        const colors = ['#3b82f6', '#0ea5e9', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
+        let hash = 0;
+        for (let i = 0; i < emp.name.length; i++) hash = emp.name.charCodeAt(i) + ((hash << 5) - hash);
+        const bg = colors[Math.abs(hash) % colors.length];
+        const initials = emp.name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        return `<div style="width:40px; height:40px; border-radius:50%; background:${bg}; color:#fff; font-weight:700; font-size:13.5px; display:flex; align-items:center; justify-content:center; border:2px solid #1e3a8a;">${initials}</div>`;
+      }
     }
 
     function getBadgeStyle(status) {
@@ -226,17 +232,30 @@
       const id = document.getElementById('empId').value.trim();
       const name = document.getElementById('empName').value.trim();
       const role = document.getElementById('empRole').value.trim();
+      const photoFile = document.getElementById('empPhotoFile').files[0];
 
       if (employees.some(emp => emp.id.toLowerCase() === id.toLowerCase())) {
         alert('Employee ID already exists!');
         return;
       }
 
-      employees.push({ id, name, role });
-      saveData();
-      this.reset();
-      renderAll();
-      showToast(`✅ ${name} registered permanently!`);
+      if (photoFile) {
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          employees.push({ id, name, role, photo: event.target.result });
+          saveData();
+          document.getElementById('addEmployeeForm').reset();
+          renderAll();
+          showToast(`✅ ${name} registered with photo!`);
+        };
+        reader.readAsDataURL(photoFile);
+      } else {
+        employees.push({ id, name, role, photo: '' });
+        saveData();
+        this.reset();
+        renderAll();
+        showToast(`✅ ${name} registered permanently!`);
+      }
     });
 
     function deleteEmployee(id) {
@@ -369,7 +388,7 @@
             tr.innerHTML = `
               <td style="padding:14px;">
                 <div style="display:flex; align-items:center; gap:12px;">
-                  <div style="width:38px; height:38px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13.5px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
+                  ${getAvatarHTML(emp)}
                   <div><strong style="display:block; font-size:14.5px; color:#f9fafb;">${emp.name}</strong><span style="font-size:12.5px; color:#94a3b8;">${emp.id} (${dateToRender})</span></div>
                 </div>
               </td>
@@ -445,7 +464,7 @@
         tr.innerHTML = `
           <td style="padding:14px;">
             <div style="display:flex; align-items:center; gap:12px;">
-              <div style="width:38px; height:38px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13.5px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
+              ${getAvatarHTML(emp)}
               <div><span style="display:block; font-size:14.5px; font-weight:500; color:#f9fafb;">${emp.name}</span><span style="font-size:12.5px; color:#94a3b8;">${emp.id}</span></div>
             </div>
           </td>
@@ -459,7 +478,7 @@
               <div style="flex:1; height:8px; background:#1e293b; border-radius:10px; overflow:hidden; min-width:100px;">
                 <div style="height:100%; width:${pct}%; background:#34d399;"></div>
               </div>
-              <span style="font-size:14px; font-weight:400; color:#e2e8f0;">${pct}%</span>
+              <span style="font-size:14.5px; font-weight:400; color:#e2e8f0;">${pct}%</span>
             </div>
           </td>
         `;
