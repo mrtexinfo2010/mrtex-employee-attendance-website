@@ -5,7 +5,438 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>ProAttend — Employee Attendance & Movement System</title>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-main: #f1f5f9;
+      --card-bg: #ffffff;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --danger: #ef4444;
+      --warning: #f59e0b;
+      --info: #0ea5e9;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #eef2ff 0%, #f8fafc 50%, #f1f5f9 100%);
+      color: var(--text-dark);
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+
+    .app-wrapper {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .top-header {
+      background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+      color: #fff;
+      padding: 22px 28px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.25);
+      margin-bottom: 24px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-logo {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, #6366f1, #ec4899);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+    }
+
+    .brand h1 {
+      font-size: 22px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .badge-pro {
+      background: rgba(255, 255, 255, 0.15);
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+
+    .brand p {
+      font-size: 13px;
+      color: #c7d2fe;
+      margin-top: 2px;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .date-picker-box {
+      background: rgba(255, 255, 255, 0.12);
+      padding: 6px 12px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+    }
+
+    .date-picker-box input {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-weight: 600;
+      outline: none;
+    }
+
+    .date-picker-box input::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 10px;
+      border: none;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 12px rgba(79, 70, 229, 0.25);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-warning {
+      background: #0284c7;
+      color: #fff;
+    }
+
+    .btn-warning:hover {
+      background: #0369a1;
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.12);
+      color: #fff;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.22);
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: var(--card-bg);
+      padding: 20px;
+      border-radius: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      border: 1px solid var(--border);
+    }
+
+    .kpi-info span {
+      font-size: 12.5px;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    .kpi-info h2 {
+      font-size: 30px;
+      font-weight: 700;
+      margin-top: 6px;
+    }
+
+    .kpi-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 21px;
+    }
+
+    .kpi-card.total .kpi-icon { background: #eef2ff; }
+    .kpi-card.present .kpi-icon { background: #ecfdf5; }
+    .kpi-card.present h2 { color: var(--success); }
+    .kpi-card.absent .kpi-icon { background: #fef2f2; }
+    .kpi-card.absent h2 { color: var(--danger); }
+    .kpi-card.late .kpi-icon { background: #fffbeb; }
+    .kpi-card.late h2 { color: var(--warning); }
+    .kpi-card.movement .kpi-icon { background: #e0f2fe; }
+    .kpi-card.movement h2 { color: #0284c7; }
+
+    .glass-panel {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.04);
+      border: 1px solid var(--border);
+      margin-bottom: 24px;
+    }
+
+    .movement-panel {
+      border-top: 4px solid #0284c7;
+    }
+
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .panel-title h3, .panel-header h3 {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .sub-text {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .modern-form {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    input[type="text"], input[type="time"], input[type="month"], select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 13.5px;
+      background: #f8fafc;
+      color: var(--text-dark);
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    .modern-form input, .modern-form select {
+      flex: 1;
+      min-width: 170px;
+    }
+
+    .filter-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background: #f8fafc;
+      color: var(--text-muted);
+      font-size: 12px;
+      text-transform: uppercase;
+      padding: 13px 14px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    td {
+      padding: 14px;
+      border-bottom: 1px solid #f1f5f9;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    tbody tr:hover {
+      background-color: #f8fafc;
+    }
+
+    .emp-profile {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .emp-details strong {
+      display: block;
+      font-size: 14px;
+    }
+
+    .emp-details span {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .status-badge {
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .status-Present, .status-Returned { background: #dcfce7; color: #15803d; }
+    .status-Absent { background: #fee2e2; color: #b91c1c; }
+    .status-Late { background: #fef3c7; color: #b45309; }
+    .status-Half-Day { background: #e0e7ff; color: #4338ca; }
+    .status-Outside { background: #e0f2fe; color: #0369a1; }
+
+    .quick-pills {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .pill-btn {
+      padding: 5px 9px;
+      border-radius: 6px;
+      border: 1px solid var(--border);
+      background: #fff;
+      font-size: 11.5px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .pill-btn:hover { background: #eef2ff; border-color: var(--primary); color: var(--primary); }
+
+    .btn-return {
+      background: #ecfdf5;
+      color: #059669;
+      border: 1px solid #a7f3d0;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-right: 5px;
+    }
+
+    .btn-delete {
+      background: #fef2f2;
+      color: var(--danger);
+      border: 1px solid #fecaca;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 10px;
+      overflow: hidden;
+      min-width: 80px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #4f46e5, #10b981);
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #0f172a;
+      color: #fff;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-size: 13.5px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      opacity: 0;
+      transform: translateY(20px);
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  </style>
 </head>
 <body>
   <div class="app-wrapper">
@@ -90,7 +521,7 @@
       <div class="panel-header">
         <div>
           <h3>🚶 Employee Movement Register (Out-of-Office Log)</h3>
-          <small class="sub-text">Track official visits, factory trips, or short breaks for <strong id="movementDateDisplay"></strong></small>
+          <small class="sub-text">Track official visits or trips for <strong id="movementDateDisplay"></strong></small>
         </div>
       </div>
 
@@ -98,9 +529,9 @@
         <select id="moveEmpId" required>
           <option value="">-- Select Employee --</option>
         </select>
-        <input type="text" id="movePurpose" placeholder="Destination / Purpose (e.g. Client Visit, Bank, Factory)" required>
-        <input type="time" id="moveOutTime" title="Out Time" required>
-        <input type="time" id="moveInTime" title="Return Time (Optional)">
+        <input type="text" id="movePurpose" placeholder="Destination / Purpose (e.g. Client Visit, Bank)" required>
+        <input type="time" id="moveOutTime" required>
+        <input type="time" id="moveInTime" placeholder="Return Time">
         <button type="submit" class="btn btn-warning">Log Movement</button>
       </form>
 
@@ -165,7 +596,6 @@
       <div class="panel-header">
         <div>
           <h3>📊 Monthly Performance & Attendance Report</h3>
-          <small class="sub-text">Calculated from recorded working days</small>
         </div>
         <input type="month" id="reportMonth" onchange="renderMonthlyReport()">
       </div>
@@ -189,9 +619,391 @@
     </section>
   </div>
 
-  <!-- Toast Notification -->
   <div id="toast" class="toast">Saved successfully!</div>
 
-  <script src="script.js"></script>
+  <script>
+    let employees = JSON.parse(localStorage.getItem('company_employees')) || [
+      { id: 'EMP-101', name: 'Tanvir Ahmed', role: 'Sales Executive' },
+      { id: 'EMP-102', name: 'Nusrat Jahan', role: 'HR Manager' },
+      { id: 'EMP-103', name: 'Rafiul Islam', role: 'Accounts Officer' }
+    ];
+
+    let attendanceRecords = JSON.parse(localStorage.getItem('company_attendance')) || {};
+    let movementRecords = JSON.parse(localStorage.getItem('company_movements')) || {};
+
+    const dateInput = document.getElementById('attendanceDate');
+    const monthInput = document.getElementById('reportMonth');
+
+    const today = new Date().toISOString().split('T')[0];
+    dateInput.value = today;
+    monthInput.value = today.slice(0, 7);
+
+    document.getElementById('moveOutTime').value = new Date().toTimeString().slice(0, 5);
+
+    function updateClock() {
+      const now = new Date();
+      const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+      document.getElementById('liveClock').textContent = now.toLocaleDateString('en-US', options);
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2500);
+    }
+
+    function getAvatarColor(name) {
+      const colors = ['#4f46e5', '#0891b2', '#059669', '#d97706', '#dc2626', '#7c3aed', '#db2777'];
+      let hash = 0;
+      for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+      return colors[Math.abs(hash) % colors.length];
+    }
+
+    function getInitials(name) {
+      return name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+    }
+
+    function calculateDuration(startTime, endTime) {
+      if (!startTime || !endTime) return '—';
+      const [inH, inM] = startTime.split(':').map(Number);
+      const [outH, outM] = endTime.split(':').map(Number);
+      let diffMins = (outH * 60 + outM) - (inH * 60 + inM);
+      if (diffMins <= 0) return '0h 0m';
+      const hrs = Math.floor(diffMins / 60);
+      const mins = diffMins % 60;
+      return `${hrs}h ${mins}m`;
+    }
+
+    dateInput.addEventListener('change', () => { renderAll(); });
+
+    function saveData() {
+      localStorage.setItem('company_employees', JSON.stringify(employees));
+      localStorage.setItem('company_attendance', JSON.stringify(attendanceRecords));
+      localStorage.setItem('company_movements', JSON.stringify(movementRecords));
+    }
+
+    function populateEmployeeDropdown() {
+      const select = document.getElementById('moveEmpId');
+      const currentVal = select.value;
+      select.innerHTML = '<option value="">-- Select Employee --</option>';
+      employees.forEach(emp => {
+        const opt = document.createElement('option');
+        opt.value = emp.id;
+        opt.textContent = `${emp.name} (${emp.id})`;
+        select.appendChild(opt);
+      });
+      select.value = currentVal;
+    }
+
+    document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const id = document.getElementById('empId').value.trim();
+      const name = document.getElementById('empName').value.trim();
+      const role = document.getElementById('empRole').value.trim();
+
+      if (employees.some(emp => emp.id.toLowerCase() === id.toLowerCase())) {
+        alert('Employee ID already exists!');
+        return;
+      }
+
+      employees.push({ id, name, role });
+      saveData();
+      this.reset();
+      renderAll();
+      showToast(`✅ ${name} added!`);
+    });
+
+    function deleteEmployee(id) {
+      if (confirm('Remove this employee?')) {
+        employees = employees.filter(emp => emp.id !== id);
+        saveData();
+        renderAll();
+        showToast('🗑️ Employee removed');
+      }
+    }
+
+    document.getElementById('movementForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const selectedDate = dateInput.value;
+      const empId = document.getElementById('moveEmpId').value;
+      const purpose = document.getElementById('movePurpose').value.trim();
+      const outTime = document.getElementById('moveOutTime').value;
+      const inTime = document.getElementById('moveInTime').value;
+
+      if (!movementRecords[selectedDate]) movementRecords[selectedDate] = [];
+
+      movementRecords[selectedDate].push({ id: Date.now(), empId, purpose, outTime, inTime });
+      saveData();
+      this.reset();
+      document.getElementById('moveOutTime').value = new Date().toTimeString().slice(0, 5);
+      renderAll();
+      showToast('🚶 Movement logged!');
+    });
+
+    function markMovementReturned(moveId) {
+      const selectedDate = dateInput.value;
+      const list = movementRecords[selectedDate] || [];
+      const item = list.find(m => m.id === moveId);
+      if (item) {
+        item.inTime = new Date().toTimeString().slice(0, 5);
+        saveData();
+        renderAll();
+        showToast('✅ Marked Returned!');
+      }
+    }
+
+    function updateMovementInTime(moveId, newTime) {
+      const selectedDate = dateInput.value;
+      const list = movementRecords[selectedDate] || [];
+      const item = list.find(m => m.id === moveId);
+      if (item) {
+        item.inTime = newTime;
+        saveData();
+        renderAll();
+      }
+    }
+
+    function deleteMovement(moveId) {
+      const selectedDate = dateInput.value;
+      if (movementRecords[selectedDate]) {
+        movementRecords[selectedDate] = movementRecords[selectedDate].filter(m => m.id !== moveId);
+        saveData();
+        renderAll();
+        showToast('🗑️ Movement deleted');
+      }
+    }
+
+    function renderMovementTable() {
+      const selectedDate = dateInput.value;
+      document.getElementById('movementDateDisplay').textContent = selectedDate;
+      const tbody = document.getElementById('movementTableBody');
+      tbody.innerHTML = '';
+      const list = movementRecords[selectedDate] || [];
+
+      if (list.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#94a3b8; padding:20px;">No movement logged for this date.</td></tr>`;
+        return;
+      }
+
+      list.forEach(item => {
+        const emp = employees.find(e => e.id === item.empId) || { name: 'Unknown', id: item.empId };
+        const isReturned = Boolean(item.inTime);
+        const statusText = isReturned ? 'Returned' : 'Outside';
+        const duration = calculateDuration(item.outTime, item.inTime);
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="emp-profile">
+              <div class="avatar" style="background:${getAvatarColor(emp.name)}">${getInitials(emp.name)}</div>
+              <div class="emp-details"><strong>${emp.name}</strong><span>${emp.id}</span></div>
+            </div>
+          </td>
+          <td><strong>${item.purpose}</strong></td>
+          <td>${item.outTime}</td>
+          <td><input type="time" value="${item.inTime}" onchange="updateMovementInTime(${item.id}, this.value)"></td>
+          <td>${duration}</td>
+          <td><span class="status-badge status-${statusText}">${statusText}</span></td>
+          <td>
+            ${!isReturned ? `<button class="btn-return" onclick="markMovementReturned(${item.id})">✓ Return</button>` : ''}
+            <button class="btn-delete" onclick="deleteMovement(${item.id})">Delete</button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function updateAttendance(empId, field, value) {
+      const selectedDate = dateInput.value;
+      if (!attendanceRecords[selectedDate]) attendanceRecords[selectedDate] = {};
+      if (!attendanceRecords[selectedDate][empId]) {
+        attendanceRecords[selectedDate][empId] = { status: 'Absent', checkIn: '', checkOut: '' };
+      }
+      attendanceRecords[selectedDate][empId][field] = value;
+
+      if (field === 'status' && (value === 'Present' || value === 'Late')) {
+        if (!attendanceRecords[selectedDate][empId].checkIn) {
+          attendanceRecords[selectedDate][empId].checkIn = new Date().toTimeString().slice(0, 5);
+        }
+      }
+
+      saveData();
+      renderAll();
+      showToast('💾 Updated');
+    }
+
+    function markAllPresent() {
+      const selectedDate = dateInput.value;
+      if (!attendanceRecords[selectedDate]) attendanceRecords[selectedDate] = {};
+      employees.forEach(emp => {
+        const existing = attendanceRecords[selectedDate][emp.id] || {};
+        attendanceRecords[selectedDate][emp.id] = {
+          status: 'Present',
+          checkIn: existing.checkIn || '09:00',
+          checkOut: existing.checkOut || ''
+        };
+      });
+      saveData();
+      renderAll();
+      showToast('✨ All marked Present!');
+    }
+
+    function renderAttendanceTable() {
+      const selectedDate = dateInput.value;
+      document.getElementById('displayDate').textContent = selectedDate;
+      const searchQuery = document.getElementById('searchInput').value.toLowerCase();
+      const statusFilter = document.getElementById('statusFilter').value;
+      const tbody = document.getElementById('attendanceTableBody');
+      tbody.innerHTML = '';
+      const dayData = attendanceRecords[selectedDate] || {};
+
+      employees
+        .filter(emp => {
+          const record = dayData[emp.id] || { status: 'Absent' };
+          const matchesSearch = emp.name.toLowerCase().includes(searchQuery) || emp.id.toLowerCase().includes(searchQuery);
+          const matchesStatus = statusFilter === 'ALL' || record.status === statusFilter;
+          return matchesSearch && matchesStatus;
+        })
+        .forEach(emp => {
+          const record = dayData[emp.id] || { status: 'Absent', checkIn: '', checkOut: '' };
+          const workHrs = calculateDuration(record.checkIn, record.checkOut);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>
+              <div class="emp-profile">
+                <div class="avatar" style="background:${getAvatarColor(emp.name)}">${getInitials(emp.name)}</div>
+                <div class="emp-details"><strong>${emp.name}</strong><span>${emp.id}</span></div>
+              </div>
+            </td>
+            <td>${emp.role}</td>
+            <td><input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)"></td>
+            <td><input type="time" value="${record.checkOut}" onchange="updateAttendance('${emp.id}', 'checkOut', this.value)"></td>
+            <td><strong>${workHrs}</strong></td>
+            <td><span class="status-badge status-${record.status}">${record.status}</span></td>
+            <td>
+              <div class="quick-pills">
+                <button class="pill-btn" onclick="updateAttendance('${emp.id}', 'status', 'Present')">Present</button>
+                <button class="pill-btn" onclick="updateAttendance('${emp.id}', 'status', 'Late')">Late</button>
+                <button class="pill-btn" onclick="updateAttendance('${emp.id}', 'status', 'Half-Day')">Half</button>
+                <button class="pill-btn" onclick="updateAttendance('${emp.id}', 'status', 'Absent')">Absent</button>
+              </div>
+            </td>
+            <td><button class="btn-delete" onclick="deleteEmployee('${emp.id}')">Remove</button></td>
+          `;
+          tbody.appendChild(tr);
+        });
+    }
+
+    function updateSummary() {
+      const selectedDate = dateInput.value;
+      const dayData = attendanceRecords[selectedDate] || {};
+      const dayMovements = movementRecords[selectedDate] || [];
+      let present = 0, absent = 0, lateOrHalf = 0;
+
+      employees.forEach(emp => {
+        const status = dayData[emp.id] ? dayData[emp.id].status : 'Absent';
+        if (status === 'Present') present++;
+        else if (status === 'Late' || status === 'Half-Day') lateOrHalf++;
+        else absent++;
+      });
+
+      const outsideCount = dayMovements.filter(m => !m.inTime).length;
+
+      document.getElementById('totalEmp').textContent = employees.length;
+      document.getElementById('presentCount').textContent = present;
+      document.getElementById('absentCount').textContent = absent;
+      document.getElementById('lateCount').textContent = lateOrHalf;
+      document.getElementById('outsideCount').textContent = outsideCount;
+    }
+
+    function renderMonthlyReport() {
+      const selectedMonth = monthInput.value;
+      const tbody = document.getElementById('monthlyReportBody');
+      tbody.innerHTML = '';
+      const recordedDates = Object.keys(attendanceRecords).filter(d => d.startsWith(selectedMonth));
+      const movementDates = Object.keys(movementRecords).filter(d => d.startsWith(selectedMonth));
+
+      employees.forEach(emp => {
+        let present = 0, late = 0, halfDay = 0, absent = 0, moveCount = 0;
+
+        recordedDates.forEach(date => {
+          const rec = attendanceRecords[date][emp.id];
+          const status = rec ? rec.status : 'Absent';
+          if (status === 'Present') present++;
+          else if (status === 'Late') late++;
+          else if (status === 'Half-Day') halfDay++;
+          else absent++;
+        });
+
+        movementDates.forEach(date => {
+          const moves = movementRecords[date] || [];
+          moveCount += moves.filter(m => m.empId === emp.id).length;
+        });
+
+        const totalDays = recordedDates.length;
+        const effective = present + late + (halfDay * 0.5);
+        const pct = totalDays > 0 ? ((effective / totalDays) * 100).toFixed(1) : '0.0';
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="emp-profile">
+              <div class="avatar" style="background:${getAvatarColor(emp.name)}">${getInitials(emp.name)}</div>
+              <div class="emp-details"><strong>${emp.name}</strong><span>${emp.id}</span></div>
+            </div>
+          </td>
+          <td><strong style="color:#10b981">${present}</strong></td>
+          <td><strong style="color:#f59e0b">${late}</strong></td>
+          <td><strong style="color:#4f46e5">${halfDay}</strong></td>
+          <td><strong style="color:#ef4444">${absent}</strong></td>
+          <td><strong style="color:#0284c7">${moveCount} trips</strong></td>
+          <td>
+            <div class="progress-wrap">
+              <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+              <strong>${pct}%</strong>
+            </div>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function exportToCSV() {
+      const selectedDate = dateInput.value;
+      const dayData = attendanceRecords[selectedDate] || {};
+      const dayMovements = movementRecords[selectedDate] || [];
+
+      let csv = '--- ATTENDANCE REPORT ---\n';
+      csv += 'Date,ID,Name,Designation,Check-In,Check-Out,Hours,Status\n';
+
+      employees.forEach(emp => {
+        const rec = dayData[emp.id] || { status: 'Absent', checkIn: '', checkOut: '' };
+        const hrs = calculateDuration(rec.checkIn, rec.checkOut);
+        csv += `${selectedDate},"${emp.id}","${emp.name}","${emp.role}","${rec.checkIn}","${rec.checkOut}","${hrs}","${rec.status}"\n`;
+      });
+
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `Attendance_${selectedDate}.csv`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('📥 Downloaded CSV!');
+    }
+
+    function renderAll() {
+      populateEmployeeDropdown();
+      renderMovementTable();
+      renderAttendanceTable();
+      updateSummary();
+      renderMonthlyReport();
+    }
+
+    renderAll();
+  </script>
 </body>
 </html>
