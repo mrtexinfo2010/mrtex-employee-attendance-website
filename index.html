@@ -162,7 +162,7 @@
             <tr style="background:#030712; border-bottom:2px solid #1e3a8a; color:#94a3b8; font-size:12.5px; text-transform:uppercase;">
               <th style="padding:14px;">Employee</th>
               <th style="padding:14px;">Designation</th>
-              <th style="padding:14px;">Check-In</th>
+              <th style="padding:14px;">Check-In (00:00 / Custom)</th>
               <th style="padding:14px;">Movement (Out-of-Office)</th>
               <th style="padding:14px;">Status</th>
               <th style="padding:14px;">Quick Mark</th>
@@ -211,7 +211,6 @@
         document.getElementById('loginModal').style.display = 'none';
       } else {
         document.getElementById('loginModal').style.display = 'flex';
-        // Auto focus password box and clear value
         const passInput = document.getElementById('loginPassword');
         passInput.value = '';
         passInput.focus();
@@ -224,13 +223,13 @@
       const pass = passInput.value;
       if (pass === 'MRTEX2025') {
         sessionStorage.setItem('mrtex_auth', 'true');
-        passInput.value = ''; // Auto clear password field immediately upon success
+        passInput.value = '';
         document.getElementById('loginModal').style.display = 'none';
         document.getElementById('loginError').style.display = 'none';
         showToast('🔓 Access Granted');
       } else {
         document.getElementById('loginError').style.display = 'block';
-        passInput.value = ''; // Auto clear on error too
+        passInput.value = '';
         passInput.focus();
       }
     }
@@ -345,14 +344,22 @@
 
       if (field === 'status' && (value === 'Present' || value === 'Late')) {
         if (!rec.checkIn) {
-          const now = new Date();
-          rec.checkIn = now.toTimeString().slice(0, 5);
+          rec.checkIn = '00:00';
         }
       }
 
       saveData();
       renderAll();
       showToast('💾 Attendance updated');
+    }
+
+    function setCheckInTime(empId, timeVal) {
+      const selectedDate = dateInput.value;
+      const rec = ensureRecord(selectedDate, empId);
+      rec.checkIn = timeVal;
+      saveData();
+      renderAll();
+      showToast(`⏰ Check-in set to ${timeVal}`);
     }
 
     function logRowMovement(empId) {
@@ -389,15 +396,14 @@
 
     function markAllPresent() {
       const selectedDate = dateInput.value;
-      const defaultTime = new Date().toTimeString().slice(0, 5);
       employees.forEach(emp => {
         const rec = ensureRecord(selectedDate, emp.id);
         rec.status = 'Present';
-        if (!rec.checkIn) rec.checkIn = defaultTime;
+        if (!rec.checkIn) rec.checkIn = '00:00';
       });
       saveData();
       renderAll();
-      showToast('✨ All marked Present for today!');
+      showToast('✨ All marked Present with 00:00!');
     }
 
     function renderAttendanceTable() {
@@ -467,7 +473,10 @@
               </td>
               <td style="padding:14px; font-size:14px; color:#cbd5e1;">${emp.role}</td>
               <td style="padding:14px;">
-                <input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)" style="padding:7px 10px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:6px; font-size:13.5px; cursor:pointer;" title="Click to change time">
+                <div style="display:flex; align-items:center; gap:6px;">
+                  <input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)" style="padding:7px 10px; background:#030712; color:#f8fafc; border:1px solid #1e3a8a; border-radius:6px; font-size:13.5px; cursor:pointer;">
+                  <button onclick="setCheckInTime('${emp.id}', '00:00')" style="background:#1e293b; color:#93c5fd; border:1px solid #1e3a8a; padding:6px 9px; border-radius:6px; font-size:11.5px; font-weight:600; cursor:pointer;" title="Set 00:00">00:00</button>
+                </div>
               </td>
               <td style="padding:14px; min-width:230px;">${movementHTML}</td>
               <td style="padding:14px;"><span style="padding:5px 14px; border-radius:20px; font-size:12.5px; font-weight:600; ${getBadgeStyle(record.status)}">${record.status}</span></td>
