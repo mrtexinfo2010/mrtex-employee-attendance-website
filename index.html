@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProAttend HR — Employee Attendance System</title>
+  <title>M.R. TEX — Employee Attendance System</title>
 </head>
 <body style="margin:0; padding:20px; background-color:#f1f5f9; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#0f172a;">
 
@@ -12,9 +12,10 @@
     <!-- Top Header -->
     <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); color:#ffffff; padding:22px 26px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:22px; box-shadow:0 8px 20px rgba(30,27,75,0.2);">
       <div style="display:flex; align-items:center; gap:14px;">
-        <div style="width:44px; height:44px; background:#6366f1; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px; font-weight:bold; color:#fff;">✓</div>
+        <!-- Logo Image -->
+        <img src="logo.jpg" alt="M.R. TEX Logo" style="width:52px; height:52px; object-fit:contain; background:#ffffff; border-radius:10px; padding:3px;">
         <div>
-          <h1 style="margin:0; font-size:22px; font-weight:700;">ProAttend <span style="background:rgba(255,255,255,0.2); font-size:11px; padding:2px 8px; border-radius:12px;">HR</span></h1>
+          <h1 style="margin:0; font-size:22px; font-weight:700;">M.R. TEX <span style="font-size:16px; font-weight:400; color:#c7d2fe;">— Employee Attendance</span></h1>
           <p id="liveClock" style="margin:4px 0 0 0; font-size:13px; color:#c7d2fe;">Loading time...</p>
         </div>
       </div>
@@ -214,7 +215,7 @@
         attendanceRecords[date][empId] = {
           status: 'Absent',
           checkIn: '',
-          movement: null // { purpose: '', outTime: '' }
+          movement: null
         };
       }
       return attendanceRecords[date][empId];
@@ -319,11 +320,8 @@
       const tbody = document.getElementById('attendanceTableBody');
       tbody.innerHTML = '';
 
-      // Check if search query contains a date format or date text (e.g. "2026-11-17" or similar)
-      // If user typed a date in search, we can temporarily switch dateInput or filter records across dates
       let targetDates = [selectedDate];
       if (searchQuery.length >= 4 && /\d{4}/.test(searchQuery)) {
-        // Find matching dates in attendanceRecords
         const matchedKeys = Object.keys(attendanceRecords).filter(d => d.includes(searchQuery));
         if (matchedKeys.length > 0) {
           targetDates = matchedKeys;
@@ -336,7 +334,6 @@
         employees
           .filter(emp => {
             const record = dayData[emp.id] || { status: 'Absent', movement: null };
-            // Search matches name, ID, or date
             const matchesSearch = emp.name.toLowerCase().includes(searchQuery) || 
                                   emp.id.toLowerCase().includes(searchQuery) || 
                                   dateToRender.includes(searchQuery);
@@ -491,7 +488,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `Attendance_${selectedDate}.csv`;
+      a.download = `MR_TEX_Attendance_${selectedDate}.csv`;
       a.click();
       URL.revokeObjectURL(url);
       showToast('📥 Downloaded CSV!');
