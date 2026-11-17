@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ProAttend HR — Employee Attendance & Movement System</title>
+  <title>ProAttend HR — Employee Attendance System</title>
 </head>
 <body style="margin:0; padding:20px; background-color:#f1f5f9; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#0f172a;">
 
@@ -83,7 +83,7 @@
       </form>
     </div>
 
-    <!-- Daily Attendance Sheet (With Integrated Movement Column) -->
+    <!-- Daily Attendance Sheet -->
     <div style="background:#ffffff; border-radius:12px; padding:22px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
         <div>
@@ -99,7 +99,7 @@
             <option value="Absent">Absent</option>
             <option value="Outside">Currently Outside</option>
           </select>
-          <input type="text" id="searchInput" placeholder="🔍 Search name or ID..." onkeyup="renderAttendanceTable()" style="padding:9px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px;">
+          <input type="text" id="searchInput" placeholder="🔍 Search name, ID or Date (YYYY-MM-DD)..." onkeyup="renderAttendanceTable()" style="padding:9px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; min-width:280px;">
         </div>
       </div>
 
@@ -110,7 +110,6 @@
               <th style="padding:12px;">Employee</th>
               <th style="padding:12px;">Designation</th>
               <th style="padding:12px;">Check-In</th>
-              <th style="padding:12px;">Check-Out</th>
               <th style="padding:12px;">Movement (Out-of-Office)</th>
               <th style="padding:12px;">Status</th>
               <th style="padding:12px;">Quick Mark</th>
@@ -215,8 +214,7 @@
         attendanceRecords[date][empId] = {
           status: 'Absent',
           checkIn: '',
-          checkOut: '',
-          movement: null // { purpose: '', outTime: '', inTime: '' }
+          movement: null // { purpose: '', outTime: '' }
         };
       }
       return attendanceRecords[date][empId];
@@ -267,7 +265,7 @@
       showToast('💾 Attendance updated');
     }
 
-    // Log Movement right inside the row
+    // Log Movement
     function logRowMovement(empId) {
       const inputEl = document.getElementById(`moveInput_${empId}`);
       const purpose = inputEl ? inputEl.value.trim() : '';
@@ -283,8 +281,7 @@
 
       rec.movement = {
         purpose: purpose,
-        outTime: nowTime,
-        inTime: ''
+        outTime: nowTime
       };
 
       saveData();
@@ -292,19 +289,7 @@
       showToast(`🚶 Movement logged (${purpose})`);
     }
 
-    // Mark Returned in the row
-    function returnRowMovement(empId) {
-      const selectedDate = dateInput.value;
-      const rec = ensureRecord(selectedDate, empId);
-      if (rec.movement) {
-        rec.movement.inTime = new Date().toTimeString().slice(0, 5);
-        saveData();
-        renderAll();
-        showToast('✅ Employee marked Returned!');
-      }
-    }
-
-    // Clear Movement in the row
+    // Clear Movement
     function clearRowMovement(empId) {
       const selectedDate = dateInput.value;
       const rec = ensureRecord(selectedDate, empId);
@@ -333,82 +318,85 @@
       const statusFilter = document.getElementById('statusFilter').value;
       const tbody = document.getElementById('attendanceTableBody');
       tbody.innerHTML = '';
-      const dayData = attendanceRecords[selectedDate] || {};
 
-      employees
-        .filter(emp => {
-          const record = dayData[emp.id] || { status: 'Absent', movement: null };
-          const matchesSearch = emp.name.toLowerCase().includes(searchQuery) || emp.id.toLowerCase().includes(searchQuery);
-          if (statusFilter === 'Outside') {
-            return matchesSearch && record.movement && !record.movement.inTime;
-          }
-          const matchesStatus = statusFilter === 'ALL' || record.status === statusFilter;
-          return matchesSearch && matchesStatus;
-        })
-        .forEach(emp => {
-          const record = dayData[emp.id] || { status: 'Absent', checkIn: '', checkOut: '', movement: null };
-          const m = record.movement;
+      // Check if search query contains a date format or date text (e.g. "2026-11-17" or similar)
+      // If user typed a date in search, we can temporarily switch dateInput or filter records across dates
+      let targetDates = [selectedDate];
+      if (searchQuery.length >= 4 && /\d{4}/.test(searchQuery)) {
+        // Find matching dates in attendanceRecords
+        const matchedKeys = Object.keys(attendanceRecords).filter(d => d.includes(searchQuery));
+        if (matchedKeys.length > 0) {
+          targetDates = matchedKeys;
+        }
+      }
 
-          // Build Movement Cell HTML
-          let movementHTML = '';
-          if (!m) {
-            movementHTML = `
-              <div style="display:flex; gap:5px; align-items:center;">
-                <input type="text" id="moveInput_${emp.id}" placeholder="Where going?..." onkeydown="if(event.key==='Enter') logRowMovement('${emp.id}')" style="width:135px; padding:5px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:12.5px;">
-                <button onclick="logRowMovement('${emp.id}')" style="background:#0284c7; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Out</button>
-              </div>
-            `;
-          } else if (!m.inTime) {
-            movementHTML = `
-              <div style="background:#e0f2fe; border:1px solid #bae6fd; padding:6px 10px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div>
-                  <strong style="display:block; font-size:12.5px; color:#0369a1;">🚶 ${m.purpose}</strong>
-                  <span style="font-size:11px; color:#0284c7;">Out: ${m.outTime} (Outside)</span>
-                </div>
-                <div style="display:flex; gap:4px;">
-                  <button onclick="returnRowMovement('${emp.id}')" style="background:#10b981; color:#fff; border:none; padding:4px 8px; border-radius:5px; font-size:11px; font-weight:600; cursor:pointer;">✓ Return</button>
-                  <button onclick="clearRowMovement('${emp.id}')" title="Clear" style="background:#fff; color:#ef4444; border:1px solid #fecaca; padding:4px 6px; border-radius:5px; font-size:11px; cursor:pointer;">×</button>
-                </div>
-              </div>
-            `;
-          } else {
-            movementHTML = `
-              <div style="background:#f0fdf4; border:1px solid #bbf7d0; padding:6px 10px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
-                <div>
-                  <strong style="display:block; font-size:12.5px; color:#15803d;">✓ ${m.purpose}</strong>
-                  <span style="font-size:11px; color:#16a34a;">${m.outTime} → ${m.inTime}</span>
-                </div>
-                <button onclick="clearRowMovement('${emp.id}')" title="New Movement" style="background:#fff; color:#64748b; border:1px solid #cbd5e1; padding:3px 7px; border-radius:5px; font-size:11px; cursor:pointer;">Reset</button>
-              </div>
-            `;
-          }
+      targetDates.forEach(dateToRender => {
+        const dayData = attendanceRecords[dateToRender] || {};
 
-          const tr = document.createElement('tr');
-          tr.style.borderBottom = '1px solid #f1f5f9';
-          tr.innerHTML = `
-            <td style="padding:12px;">
-              <div style="display:flex; align-items:center; gap:10px;">
-                <div style="width:36px; height:36px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
-                <div><strong style="display:block; font-size:14px;">${emp.name}</strong><span style="font-size:12px; color:#64748b;">${emp.id}</span></div>
-              </div>
-            </td>
-            <td style="padding:12px; font-size:13.5px;">${emp.role}</td>
-            <td style="padding:12px;"><input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)" style="padding:6px 8px; border:1px solid #cbd5e1; border-radius:6px;"></td>
-            <td style="padding:12px;"><input type="time" value="${record.checkOut}" onchange="updateAttendance('${emp.id}', 'checkOut', this.value)" style="padding:6px 8px; border:1px solid #cbd5e1; border-radius:6px;"></td>
-            <td style="padding:12px; min-width:210px;">${movementHTML}</td>
-            <td style="padding:12px;"><span style="padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; ${getBadgeStyle(record.status)}">${record.status}</span></td>
-            <td style="padding:12px;">
-              <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                <button onclick="updateAttendance('${emp.id}', 'status', 'Present')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Present</button>
-                <button onclick="updateAttendance('${emp.id}', 'status', 'Late')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Late</button>
-                <button onclick="updateAttendance('${emp.id}', 'status', 'Half-Day')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Half</button>
-                <button onclick="updateAttendance('${emp.id}', 'status', 'Absent')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Absent</button>
-              </div>
-            </td>
-            <td style="padding:12px;"><button onclick="deleteEmployee('${emp.id}')" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Remove</button></td>
-          `;
-          tbody.appendChild(tr);
-        });
+        employees
+          .filter(emp => {
+            const record = dayData[emp.id] || { status: 'Absent', movement: null };
+            // Search matches name, ID, or date
+            const matchesSearch = emp.name.toLowerCase().includes(searchQuery) || 
+                                  emp.id.toLowerCase().includes(searchQuery) || 
+                                  dateToRender.includes(searchQuery);
+
+            if (statusFilter === 'Outside') {
+              return matchesSearch && record.movement;
+            }
+            const matchesStatus = statusFilter === 'ALL' || record.status === statusFilter;
+            return matchesSearch && matchesStatus;
+          })
+          .forEach(emp => {
+            const record = dayData[emp.id] || { status: 'Absent', checkIn: '', movement: null };
+            const m = record.movement;
+
+            let movementHTML = '';
+            if (!m) {
+              movementHTML = `
+                <div style="display:flex; gap:5px; align-items:center;">
+                  <input type="text" id="moveInput_${emp.id}" placeholder="Where going?..." onkeydown="if(event.key==='Enter') logRowMovement('${emp.id}')" style="width:145px; padding:5px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:12.5px;">
+                  <button onclick="logRowMovement('${emp.id}')" style="background:#0284c7; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Out</button>
+                </div>
+              `;
+            } else {
+              movementHTML = `
+                <div style="background:#e0f2fe; border:1px solid #bae6fd; padding:6px 10px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                  <div>
+                    <strong style="display:block; font-size:12.5px; color:#0369a1;">🚶 ${m.purpose}</strong>
+                    <span style="font-size:11px; color:#0284c7;">Out: ${m.outTime} (${dateToRender})</span>
+                  </div>
+                  <button onclick="clearRowMovement('${emp.id}')" title="Clear" style="background:#fff; color:#ef4444; border:1px solid #fecaca; padding:3px 7px; border-radius:5px; font-size:11px; cursor:pointer;">×</button>
+                </div>
+              `;
+            }
+
+            const tr = document.createElement('tr');
+            tr.style.borderBottom = '1px solid #f1f5f9';
+            tr.innerHTML = `
+              <td style="padding:12px;">
+                <div style="display:flex; align-items:center; gap:10px;">
+                  <div style="width:36px; height:36px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
+                  <div><strong style="display:block; font-size:14px;">${emp.name}</strong><span style="font-size:12px; color:#64748b;">${emp.id} (${dateToRender})</span></div>
+                </div>
+              </td>
+              <td style="padding:12px; font-size:13.5px;">${emp.role}</td>
+              <td style="padding:12px;"><input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)" style="padding:6px 8px; border:1px solid #cbd5e1; border-radius:6px;"></td>
+              <td style="padding:12px; min-width:210px;">${movementHTML}</td>
+              <td style="padding:12px;"><span style="padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; ${getBadgeStyle(record.status)}">${record.status}</span></td>
+              <td style="padding:12px;">
+                <div style="display:flex; gap:4px; flex-wrap:wrap;">
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Present')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Present</button>
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Late')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Late</button>
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Half-Day')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Half</button>
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Absent')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Absent</button>
+                </div>
+              </td>
+              <td style="padding:12px;"><button onclick="deleteEmployee('${emp.id}')" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Remove</button></td>
+            `;
+            tbody.appendChild(tr);
+          });
+      });
     }
 
     function updateSummary() {
@@ -423,7 +411,7 @@
         else if (status === 'Late' || status === 'Half-Day') lateOrHalf++;
         else absent++;
 
-        if (rec && rec.movement && !rec.movement.inTime) {
+        if (rec && rec.movement) {
           outsideCount++;
         }
       });
@@ -490,14 +478,13 @@
       const selectedDate = dateInput.value;
       const dayData = attendanceRecords[selectedDate] || {};
 
-      let csv = 'Date,ID,Name,Designation,Check-In,Check-Out,Movement Purpose,Move Out,Move Return,Status\n';
+      let csv = 'Date,ID,Name,Designation,Check-In,Movement Purpose,Move Out,Status\n';
 
       employees.forEach(emp => {
-        const rec = dayData[emp.id] || { status: 'Absent', checkIn: '', checkOut: '', movement: null };
+        const rec = dayData[emp.id] || { status: 'Absent', checkIn: '', movement: null };
         const mPurpose = rec.movement ? rec.movement.purpose : '';
         const mOut = rec.movement ? rec.movement.outTime : '';
-        const mIn = rec.movement ? rec.movement.inTime : '';
-        csv += `${selectedDate},"${emp.id}","${emp.name}","${emp.role}","${rec.checkIn}","${rec.checkOut}","${mPurpose}","${mOut}","${mIn}","${rec.status}"\n`;
+        csv += `${selectedDate},"${emp.id}","${emp.name}","${emp.role}","${rec.checkIn}","${mPurpose}","${mOut}","${rec.status}"\n`;
       });
 
       const blob = new Blob([csv], { type: 'text/csv' });
