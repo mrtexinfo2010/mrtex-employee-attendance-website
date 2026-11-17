@@ -3,73 +3,111 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Employee Attendance Management System</title>
+  <title>ProAttend — Employee Attendance Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Header -->
-    <header>
-      <div>
-        <h1>Employee Attendance System</h1>
-        <p>Daily & Monthly Staff Attendance Tracker</p>
+  <div class="app-wrapper">
+    <!-- Top Navbar -->
+    <header class="top-header">
+      <div class="brand">
+        <div class="brand-logo">✓</div>
+        <div>
+          <h1>ProAttend <span class="badge-pro">HR</span></h1>
+          <p id="liveClock">Loading time...</p>
+        </div>
       </div>
-      <div class="header-actions">
-        <input type="date" id="attendanceDate">
-        <button class="btn btn-primary" onclick="markAllPresent()">Mark All Present</button>
-        <button class="btn btn-success" onclick="exportToCSV()">Export CSV</button>
+
+      <div class="header-controls">
+        <div class="date-picker-box">
+          <label for="attendanceDate">📅 Date:</label>
+          <input type="date" id="attendanceDate">
+        </div>
+        <button class="btn btn-primary" onclick="markAllPresent()">✨ Mark All Present</button>
+        <button class="btn btn-outline" onclick="exportToCSV()">📥 Export Excel (CSV)</button>
       </div>
     </header>
 
-    <!-- Summary Cards -->
-    <section class="summary-grid">
-      <div class="card">
-        <h3>Total Employees</h3>
-        <p id="totalEmp">0</p>
+    <!-- Summary KPI Cards -->
+    <section class="kpi-grid">
+      <div class="kpi-card total">
+        <div class="kpi-info">
+          <span>Total Staff</span>
+          <h2 id="totalEmp">0</h2>
+        </div>
+        <div class="kpi-icon">👥</div>
       </div>
-      <div class="card present">
-        <h3>Present Today</h3>
-        <p id="presentCount">0</p>
+
+      <div class="kpi-card present">
+        <div class="kpi-info">
+          <span>Present Today</span>
+          <h2 id="presentCount">0</h2>
+        </div>
+        <div class="kpi-icon">✅</div>
       </div>
-      <div class="card absent">
-        <h3>Absent Today</h3>
-        <p id="absentCount">0</p>
+
+      <div class="kpi-card absent">
+        <div class="kpi-info">
+          <span>Absent Today</span>
+          <h2 id="absentCount">0</h2>
+        </div>
+        <div class="kpi-icon">❌</div>
       </div>
-      <div class="card late">
-        <h3>Late / Half-Day</h3>
-        <p id="lateCount">0</p>
+
+      <div class="kpi-card late">
+        <div class="kpi-info">
+          <span>Late / Half-Day</span>
+          <h2 id="lateCount">0</h2>
+        </div>
+        <div class="kpi-icon">⏰</div>
       </div>
     </section>
 
-    <!-- Add Employee Form -->
-    <section class="panel">
-      <h2>Add New Employee</h2>
-      <form id="addEmployeeForm" class="form-row">
-        <input type="text" id="empId" placeholder="Employee ID (e.g. EMP-101)" required>
-        <input type="text" id="empName" placeholder="Employee Full Name" required>
-        <input type="text" id="empRole" placeholder="Designation / Department" required>
-        <button type="submit" class="btn btn-primary">+ Add Employee</button>
+    <!-- Add New Employee Panel -->
+    <section class="glass-panel">
+      <div class="panel-title">
+        <h3>➕ Register New Employee</h3>
+      </div>
+      <form id="addEmployeeForm" class="modern-form">
+        <input type="text" id="empId" placeholder="ID (e.g. EMP-104)" required>
+        <input type="text" id="empName" placeholder="Full Name" required>
+        <input type="text" id="empRole" placeholder="Designation / Dept" required>
+        <button type="submit" class="btn btn-primary">Add Employee</button>
       </form>
     </section>
 
     <!-- Daily Attendance Table -->
-    <section class="panel">
+    <section class="glass-panel">
       <div class="panel-header">
-        <h2>Daily Attendance Sheet (<span id="displayDate"></span>)</h2>
-        <input type="text" id="searchInput" placeholder="Search by name or ID..." onkeyup="renderAttendanceTable()">
+        <div>
+          <h3>📋 Daily Attendance Sheet</h3>
+          <small class="sub-text">Showing records for <strong id="displayDate"></strong></small>
+        </div>
+        <div class="filter-group">
+          <select id="statusFilter" onchange="renderAttendanceTable()">
+            <option value="ALL">All Status</option>
+            <option value="Present">Present</option>
+            <option value="Late">Late</option>
+            <option value="Half-Day">Half-Day</option>
+            <option value="Absent">Absent</option>
+          </select>
+          <input type="text" id="searchInput" placeholder="🔍 Search name or ID..." onkeyup="renderAttendanceTable()">
+        </div>
       </div>
-      <div class="table-responsive">
+
+      <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Name</th>
+              <th>Employee</th>
               <th>Designation</th>
               <th>Check-In</th>
               <th>Check-Out</th>
+              <th>Work Hours</th>
               <th>Status</th>
-              <th>Quick Action</th>
-              <th>Remove</th>
+              <th>Quick Mark</th>
+              <th>Action</th>
             </tr>
           </thead>
           <tbody id="attendanceTableBody"></tbody>
@@ -77,23 +115,26 @@
       </div>
     </section>
 
-    <!-- Monthly Report Section -->
-    <section class="panel">
+    <!-- Monthly Summary Report -->
+    <section class="glass-panel">
       <div class="panel-header">
-        <h2>Monthly Attendance Summary</h2>
+        <div>
+          <h3>📊 Monthly Performance & Attendance Report</h3>
+          <small class="sub-text">Calculated from recorded working days</small>
+        </div>
         <input type="month" id="reportMonth" onchange="renderMonthlyReport()">
       </div>
-      <div class="table-responsive">
+
+      <div class="table-container">
         <table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Employee Name</th>
+              <th>Employee</th>
               <th>Present</th>
               <th>Late</th>
               <th>Half-Day</th>
               <th>Absent</th>
-              <th>Attendance %</th>
+              <th>Attendance Rate</th>
             </tr>
           </thead>
           <tbody id="monthlyReportBody"></tbody>
@@ -101,6 +142,9 @@
       </div>
     </section>
   </div>
+
+  <!-- Toast Notification -->
+  <div id="toast" class="toast">Saved successfully!</div>
 
   <script src="script.js"></script>
 </body>
