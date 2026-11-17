@@ -5,93 +5,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>M.R. TEX — Employee Attendance System</title>
 </head>
-<body style="margin:0; padding:20px; background-color:#f1f5f9; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#0f172a;">
+<body style="margin:0; padding:20px 30px; background-color:#f1f5f9; font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color:#0f172a;">
 
-  <div style="max-width:1280px; margin:0 auto;">
+  <!-- Full PC Display Container -->
+  <div style="width:100%; max-width:100%; margin:0 auto;">
 
     <!-- Top Header -->
-    <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); color:#ffffff; padding:22px 26px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:22px; box-shadow:0 8px 20px rgba(30,27,75,0.2);">
+    <div style="background:linear-gradient(135deg, #1e1b4b, #312e81); color:#ffffff; padding:22px 30px; border-radius:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:22px; box-shadow:0 8px 20px rgba(30,27,75,0.2);">
       <div style="display:flex; align-items:center; gap:14px;">
         <img src="logo.jpg" alt="M.R. TEX Logo" style="width:52px; height:52px; object-fit:contain; background:#ffffff; border-radius:10px; padding:3px;">
         <div>
-          <h1 style="margin:0; font-size:22px; font-weight:700;">M.R. TEX <span style="font-size:16px; font-weight:400; color:#c7d2fe;">— Employee Attendance</span></h1>
+          <h1 style="margin:0; font-size:24px; font-weight:700;">M.R. TEX <span style="font-size:16px; font-weight:400; color:#c7d2fe;">— Employee Attendance</span></h1>
           <p id="liveClock" style="margin:4px 0 0 0; font-size:13px; color:#c7d2fe;">Loading time...</p>
         </div>
       </div>
 
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <div style="background:rgba(255,255,255,0.15); padding:7px 12px; border-radius:8px; display:flex; align-items:center; gap:6px; font-size:13px;">
+      <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+        <div style="background:rgba(255,255,255,0.15); padding:8px 14px; border-radius:8px; display:flex; align-items:center; gap:8px; font-size:13.5px;">
           <label for="attendanceDate" style="color:#fff; font-weight:600;">📅 Date:</label>
-          <input type="date" id="attendanceDate" style="background:#fff; color:#0f172a; border:none; border-radius:5px; padding:4px 8px; font-weight:600; cursor:pointer;">
+          <input type="date" id="attendanceDate" style="background:#fff; color:#0f172a; border:none; border-radius:5px; padding:5px 10px; font-weight:600; cursor:pointer;">
         </div>
-        <button onclick="markAllPresent()" style="background:#4f46e5; color:#fff; border:1px solid #818cf8; padding:10px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">✨ Mark All Present</button>
-        <button onclick="exportToCSV()" style="background:#10b981; color:#fff; border:none; padding:10px 16px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">📥 Export Excel (CSV)</button>
+        <button onclick="markAllPresent()" style="background:#4f46e5; color:#fff; border:1px solid #818cf8; padding:10px 18px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer;">✨ Mark All Present</button>
+        <button onclick="exportToCSV()" style="background:#10b981; color:#fff; border:none; padding:10px 18px; border-radius:8px; font-size:13.5px; font-weight:600; cursor:pointer;">📥 Export Excel (CSV)</button>
       </div>
     </div>
 
     <!-- Summary KPI Cards -->
-    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:16px; margin-bottom:22px;">
-      <div style="background:#ffffff; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #4f46e5; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+    <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:18px; margin-bottom:22px;">
+      <div style="background:#ffffff; padding:22px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #4f46e5; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
         <div>
           <span style="font-size:13px; color:#64748b; font-weight:600;">Total Staff</span>
-          <h2 id="totalEmp" style="margin:6px 0 0 0; font-size:28px; font-weight:700; color:#0f172a;">0</h2>
+          <h2 id="totalEmp" style="margin:6px 0 0 0; font-size:30px; font-weight:700; color:#0f172a;">0</h2>
         </div>
-        <div style="width:45px; height:45px; background:#eef2ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px;">👥</div>
+        <div style="width:48px; height:48px; background:#eef2ff; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:24px;">👥</div>
       </div>
 
-      <div style="background:#ffffff; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #10b981; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <div style="background:#ffffff; padding:22px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #10b981; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
         <div>
           <span style="font-size:13px; color:#64748b; font-weight:600;">Present Today</span>
-          <h2 id="presentCount" style="margin:6px 0 0 0; font-size:28px; font-weight:700; color:#10b981;">0</h2>
+          <h2 id="presentCount" style="margin:6px 0 0 0; font-size:30px; font-weight:700; color:#10b981;">0</h2>
         </div>
-        <div style="width:45px; height:45px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px;">✅</div>
+        <div style="width:48px; height:48px; background:#ecfdf5; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:24px;">✅</div>
       </div>
 
-      <div style="background:#ffffff; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #ef4444; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <div style="background:#ffffff; padding:22px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #ef4444; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
         <div>
           <span style="font-size:13px; color:#64748b; font-weight:600;">Absent Today</span>
-          <h2 id="absentCount" style="margin:6px 0 0 0; font-size:28px; font-weight:700; color:#ef4444;">0</h2>
+          <h2 id="absentCount" style="margin:6px 0 0 0; font-size:30px; font-weight:700; color:#ef4444;">0</h2>
         </div>
-        <div style="width:45px; height:45px; background:#fef2f2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px;">❌</div>
+        <div style="width:48px; height:48px; background:#fef2f2; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:24px;">❌</div>
       </div>
 
-      <div style="background:#ffffff; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #f59e0b; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <div style="background:#ffffff; padding:22px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #f59e0b; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
         <div>
           <span style="font-size:13px; color:#64748b; font-weight:600;">Late / Half-Day</span>
-          <h2 id="lateCount" style="margin:6px 0 0 0; font-size:28px; font-weight:700; color:#f59e0b;">0</h2>
+          <h2 id="lateCount" style="margin:6px 0 0 0; font-size:30px; font-weight:700; color:#f59e0b;">0</h2>
         </div>
-        <div style="width:45px; height:45px; background:#fffbeb; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px;">⏰</div>
+        <div style="width:48px; height:48px; background:#fffbeb; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:24px;">⏰</div>
       </div>
 
-      <div style="background:#ffffff; padding:20px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #0284c7; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <div style="background:#ffffff; padding:22px; border-radius:12px; display:flex; justify-content:space-between; align-items:center; border-left:5px solid #0284c7; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
         <div>
           <span style="font-size:13px; color:#64748b; font-weight:600;">Outside (Movement)</span>
-          <h2 id="outsideCount" style="margin:6px 0 0 0; font-size:28px; font-weight:700; color:#0284c7;">0</h2>
+          <h2 id="outsideCount" style="margin:6px 0 0 0; font-size:30px; font-weight:700; color:#0284c7;">0</h2>
         </div>
-        <div style="width:45px; height:45px; background:#e0f2fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:22px;">🚶</div>
+        <div style="width:48px; height:48px; background:#e0f2fe; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:24px;">🚶</div>
       </div>
     </div>
 
     <!-- Register New Employee -->
-    <div style="background:#ffffff; border-radius:12px; padding:22px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+    <div style="background:#ffffff; border-radius:12px; padding:24px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
       <h3 style="margin:0 0 14px 0; font-size:17px; color:#0f172a;">➕ Register New Employee</h3>
-      <form id="addEmployeeForm" style="display:flex; gap:12px; flex-wrap:wrap;">
-        <input type="text" id="empId" placeholder="ID (e.g. EMP-104)" required style="flex:1; min-width:170px; padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
-        <input type="text" id="empName" placeholder="Full Name" required style="flex:1; min-width:180px; padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
-        <input type="text" id="empRole" placeholder="Designation / Dept" required style="flex:1; min-width:180px; padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
-        <button type="submit" style="background:#4f46e5; color:#fff; border:none; padding:10px 20px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">Add Employee</button>
+      <form id="addEmployeeForm" style="display:flex; gap:14px; flex-wrap:wrap;">
+        <input type="text" id="empId" placeholder="ID (e.g. EMP-104)" required style="flex:1; min-width:200px; padding:11px 15px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
+        <input type="text" id="empName" placeholder="Full Name" required style="flex:2; min-width:220px; padding:11px 15px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
+        <input type="text" id="empRole" placeholder="Designation / Dept" required style="flex:2; min-width:220px; padding:11px 15px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
+        <button type="submit" style="background:#4f46e5; color:#fff; border:none; padding:11px 24px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer;">Add Employee</button>
       </form>
     </div>
 
     <!-- Daily Attendance Sheet -->
-    <div style="background:#ffffff; border-radius:12px; padding:22px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+    <div style="background:#ffffff; border-radius:12px; padding:24px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:18px;">
         <div>
-          <h3 style="margin:0; font-size:17px; color:#0f172a;">📋 Daily Attendance & Movement Sheet</h3>
-          <small style="color:#64748b; font-size:13px;">Showing records for <strong id="displayDate"></strong></small>
+          <h3 style="margin:0; font-size:18px; color:#0f172a;">📋 Daily Attendance & Movement Sheet</h3>
+          <small style="color:#64748b; font-size:13.5px;">Showing records for <strong id="displayDate"></strong></small>
         </div>
-        <div style="display:flex; gap:10px; flex-wrap:wrap;">
-          <select id="statusFilter" onchange="renderAttendanceTable()" style="padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; background:#fff;">
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <select id="statusFilter" onchange="renderAttendanceTable()" style="padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px; background:#fff;">
             <option value="ALL">All Status</option>
             <option value="Present">Present</option>
             <option value="Late">Late</option>
@@ -99,21 +100,21 @@
             <option value="Absent">Absent</option>
             <option value="Outside">Currently Outside</option>
           </select>
-          <input type="text" id="searchInput" placeholder="🔍 Search name, ID or Date (YYYY-MM-DD)..." onkeyup="renderAttendanceTable()" style="padding:9px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:13.5px; min-width:280px;">
+          <input type="text" id="searchInput" placeholder="🔍 Search name, ID or Date (YYYY-MM-DD)..." onkeyup="renderAttendanceTable()" style="padding:10px 16px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px; min-width:320px;">
         </div>
       </div>
 
-      <div style="overflow-x:auto;">
+      <div style="width:100%; overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; text-align:left;">
           <thead>
-            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569; font-size:12px; text-transform:uppercase;">
-              <th style="padding:12px;">Employee</th>
-              <th style="padding:12px;">Designation</th>
-              <th style="padding:12px;">Check-In</th>
-              <th style="padding:12px;">Movement (Out-of-Office)</th>
-              <th style="padding:12px;">Status</th>
-              <th style="padding:12px;">Quick Mark</th>
-              <th style="padding:12px;">Action</th>
+            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569; font-size:12.5px; text-transform:uppercase;">
+              <th style="padding:14px;">Employee</th>
+              <th style="padding:14px;">Designation</th>
+              <th style="padding:14px;">Check-In</th>
+              <th style="padding:14px;">Movement (Out-of-Office)</th>
+              <th style="padding:14px;">Status</th>
+              <th style="padding:14px;">Quick Mark</th>
+              <th style="padding:14px;">Action</th>
             </tr>
           </thead>
           <tbody id="attendanceTableBody"></tbody>
@@ -122,23 +123,23 @@
     </div>
 
     <!-- Monthly Performance Report -->
-    <div style="background:#ffffff; border-radius:12px; padding:22px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
-        <h3 style="margin:0; font-size:17px; color:#0f172a;">📊 Monthly Performance & Attendance Report</h3>
-        <input type="month" id="reportMonth" onchange="renderMonthlyReport()" style="padding:9px 12px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
+    <div style="background:#ffffff; border-radius:12px; padding:24px; margin-bottom:22px; box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:15px; margin-bottom:18px;">
+        <h3 style="margin:0; font-size:18px; color:#0f172a;">📊 Monthly Performance & Attendance Report</h3>
+        <input type="month" id="reportMonth" onchange="renderMonthlyReport()" style="padding:10px 14px; border:1px solid #cbd5e1; border-radius:8px; font-size:14px;">
       </div>
 
-      <div style="overflow-x:auto;">
+      <div style="width:100%; overflow-x:auto;">
         <table style="width:100%; border-collapse:collapse; text-align:left;">
           <thead>
-            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569; font-size:12px; text-transform:uppercase;">
-              <th style="padding:12px;">Employee</th>
-              <th style="padding:12px;">Present</th>
-              <th style="padding:12px;">Late</th>
-              <th style="padding:12px;">Half-Day</th>
-              <th style="padding:12px;">Absent</th>
-              <th style="padding:12px;">Movements</th>
-              <th style="padding:12px;">Attendance Rate</th>
+            <tr style="background:#f8fafc; border-bottom:2px solid #e2e8f0; color:#475569; font-size:12.5px; text-transform:uppercase;">
+              <th style="padding:14px;">Employee</th>
+              <th style="padding:14px;">Present</th>
+              <th style="padding:14px;">Late</th>
+              <th style="padding:14px;">Half-Day</th>
+              <th style="padding:14px;">Absent</th>
+              <th style="padding:14px;">Movements</th>
+              <th style="padding:14px;">Attendance Rate</th>
             </tr>
           </thead>
           <tbody id="monthlyReportBody"></tbody>
@@ -149,7 +150,7 @@
   </div>
 
   <!-- Toast Alert -->
-  <div id="toast" style="position:fixed; bottom:24px; right:24px; background:#0f172a; color:#fff; padding:12px 20px; border-radius:8px; font-size:13.5px; box-shadow:0 8px 20px rgba(0,0,0,0.25); display:none; z-index:9999;">Saved!</div>
+  <div id="toast" style="position:fixed; bottom:24px; right:24px; background:#0f172a; color:#fff; padding:14px 22px; border-radius:8px; font-size:14px; box-shadow:0 8px 20px rgba(0,0,0,0.25); display:none; z-index:9999;">Saved!</div>
 
   <script>
     let employees = JSON.parse(localStorage.getItem('company_employees')) || [
@@ -220,7 +221,6 @@
       return attendanceRecords[date][empId];
     }
 
-    // Add Employee (Permanent across all days)
     document.getElementById('addEmployeeForm').addEventListener('submit', function(e) {
       e.preventDefault();
       const id = document.getElementById('empId').value.trim();
@@ -248,7 +248,6 @@
       }
     }
 
-    // Update Attendance
     function updateAttendance(empId, field, value) {
       const selectedDate = dateInput.value;
       const rec = ensureRecord(selectedDate, empId);
@@ -265,7 +264,6 @@
       showToast('💾 Attendance updated');
     }
 
-    // Log Movement
     function logRowMovement(empId) {
       const inputEl = document.getElementById(`moveInput_${empId}`);
       const purpose = inputEl ? inputEl.value.trim() : '';
@@ -289,7 +287,6 @@
       showToast(`🚶 Movement logged (${purpose})`);
     }
 
-    // Clear Movement
     function clearRowMovement(empId) {
       const selectedDate = dateInput.value;
       const rec = ensureRecord(selectedDate, empId);
@@ -350,19 +347,19 @@
             let movementHTML = '';
             if (!m) {
               movementHTML = `
-                <div style="display:flex; gap:5px; align-items:center;">
-                  <input type="text" id="moveInput_${emp.id}" placeholder="Where going?..." onkeydown="if(event.key==='Enter') logRowMovement('${emp.id}')" style="width:145px; padding:5px 8px; border:1px solid #cbd5e1; border-radius:6px; font-size:12.5px;">
-                  <button onclick="logRowMovement('${emp.id}')" style="background:#0284c7; color:#fff; border:none; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Out</button>
+                <div style="display:flex; gap:6px; align-items:center;">
+                  <input type="text" id="moveInput_${emp.id}" placeholder="Where going?..." onkeydown="if(event.key==='Enter') logRowMovement('${emp.id}')" style="width:160px; padding:6px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13px;">
+                  <button onclick="logRowMovement('${emp.id}')" style="background:#0284c7; color:#fff; border:none; padding:6px 12px; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer;">Out</button>
                 </div>
               `;
             } else {
               movementHTML = `
-                <div style="background:#e0f2fe; border:1px solid #bae6fd; padding:6px 10px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                <div style="background:#e0f2fe; border:1px solid #bae6fd; padding:6px 12px; border-radius:8px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
                   <div>
-                    <strong style="display:block; font-size:12.5px; color:#0369a1;">🚶 ${m.purpose}</strong>
-                    <span style="font-size:11px; color:#0284c7;">Out: ${m.outTime} (${dateToRender})</span>
+                    <strong style="display:block; font-size:13px; color:#0369a1;">🚶 ${m.purpose}</strong>
+                    <span style="font-size:11.5px; color:#0284c7;">Out: ${m.outTime} (${dateToRender})</span>
                   </div>
-                  <button onclick="clearRowMovement('${emp.id}')" title="Clear" style="background:#fff; color:#ef4444; border:1px solid #fecaca; padding:3px 7px; border-radius:5px; font-size:11px; cursor:pointer;">×</button>
+                  <button onclick="clearRowMovement('${emp.id}')" title="Clear" style="background:#fff; color:#ef4444; border:1px solid #fecaca; padding:4px 8px; border-radius:5px; font-size:11px; cursor:pointer;">×</button>
                 </div>
               `;
             }
@@ -370,25 +367,25 @@
             const tr = document.createElement('tr');
             tr.style.borderBottom = '1px solid #f1f5f9';
             tr.innerHTML = `
-              <td style="padding:12px;">
-                <div style="display:flex; align-items:center; gap:10px;">
-                  <div style="width:36px; height:36px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
-                  <div><strong style="display:block; font-size:14px;">${emp.name}</strong><span style="font-size:12px; color:#64748b;">${emp.id} (${dateToRender})</span></div>
+              <td style="padding:14px;">
+                <div style="display:flex; align-items:center; gap:12px;">
+                  <div style="width:38px; height:38px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13.5px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
+                  <div><strong style="display:block; font-size:14.5px;">${emp.name}</strong><span style="font-size:12.5px; color:#64748b;">${emp.id} (${dateToRender})</span></div>
                 </div>
               </td>
-              <td style="padding:12px; font-size:13.5px;">${emp.role}</td>
-              <td style="padding:12px;"><input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)" style="padding:6px 8px; border:1px solid #cbd5e1; border-radius:6px;"></td>
-              <td style="padding:12px; min-width:210px;">${movementHTML}</td>
-              <td style="padding:12px;"><span style="padding:4px 12px; border-radius:20px; font-size:12px; font-weight:600; ${getBadgeStyle(record.status)}">${record.status}</span></td>
-              <td style="padding:12px;">
-                <div style="display:flex; gap:4px; flex-wrap:wrap;">
-                  <button onclick="updateAttendance('${emp.id}', 'status', 'Present')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Present</button>
-                  <button onclick="updateAttendance('${emp.id}', 'status', 'Late')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Late</button>
-                  <button onclick="updateAttendance('${emp.id}', 'status', 'Half-Day')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Half</button>
-                  <button onclick="updateAttendance('${emp.id}', 'status', 'Absent')" style="padding:4px 8px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:11.5px; font-weight:600; cursor:pointer;">Absent</button>
+              <td style="padding:14px; font-size:14px;">${emp.role}</td>
+              <td style="padding:14px;"><input type="time" value="${record.checkIn}" onchange="updateAttendance('${emp.id}', 'checkIn', this.value)" style="padding:7px 10px; border:1px solid #cbd5e1; border-radius:6px; font-size:13.5px;"></td>
+              <td style="padding:14px; min-width:230px;">${movementHTML}</td>
+              <td style="padding:14px;"><span style="padding:5px 14px; border-radius:20px; font-size:12.5px; font-weight:600; ${getBadgeStyle(record.status)}">${record.status}</span></td>
+              <td style="padding:14px;">
+                <div style="display:flex; gap:5px; flex-wrap:wrap;">
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Present')" style="padding:5px 10px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:12px; font-weight:600; cursor:pointer;">Present</button>
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Late')" style="padding:5px 10px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:12px; font-weight:600; cursor:pointer;">Late</button>
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Half-Day')" style="padding:5px 10px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:12px; font-weight:600; cursor:pointer;">Half</button>
+                  <button onclick="updateAttendance('${emp.id}', 'status', 'Absent')" style="padding:5px 10px; border-radius:5px; border:1px solid #cbd5e1; background:#fff; font-size:12px; font-weight:600; cursor:pointer;">Absent</button>
                 </div>
               </td>
-              <td style="padding:12px;"><button onclick="deleteEmployee('${emp.id}')" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; padding:5px 10px; border-radius:6px; font-size:12px; font-weight:600; cursor:pointer;">Remove</button></td>
+              <td style="padding:14px;"><button onclick="deleteEmployee('${emp.id}')" style="background:#fef2f2; color:#ef4444; border:1px solid #fecaca; padding:6px 12px; border-radius:6px; font-size:12.5px; font-weight:600; cursor:pointer;">Remove</button></td>
             `;
             tbody.appendChild(tr);
           });
@@ -446,23 +443,23 @@
         const tr = document.createElement('tr');
         tr.style.borderBottom = '1px solid #f1f5f9';
         tr.innerHTML = `
-          <td style="padding:12px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="width:36px; height:36px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
-              <div><strong style="display:block; font-size:14px;">${emp.name}</strong><span style="font-size:12px; color:#64748b;">${emp.id}</span></div>
+          <td style="padding:14px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="width:38px; height:38px; border-radius:8px; background:${getAvatarColor(emp.name)}; color:#fff; font-weight:700; font-size:13.5px; display:flex; align-items:center; justify-content:center;">${getInitials(emp.name)}</div>
+              <div><strong style="display:block; font-size:14.5px;">${emp.name}</strong><span style="font-size:12.5px; color:#64748b;">${emp.id}</span></div>
             </div>
           </td>
-          <td style="padding:12px;"><strong style="color:#10b981;">${present}</strong></td>
-          <td style="padding:12px;"><strong style="color:#f59e0b;">${late}</strong></td>
-          <td style="padding:12px;"><strong style="color:#4f46e5;">${halfDay}</strong></td>
-          <td style="padding:12px;"><strong style="color:#ef4444;">${absent}</strong></td>
-          <td style="padding:12px;"><strong style="color:#0284c7;">${moveCount} trips</strong></td>
-          <td style="padding:12px;">
-            <div style="display:flex; align-items:center; gap:10px;">
-              <div style="flex:1; height:8px; background:#e2e8f0; border-radius:10px; overflow:hidden; min-width:80px;">
+          <td style="padding:14px;"><strong style="color:#10b981; font-size:14px;">${present}</strong></td>
+          <td style="padding:14px;"><strong style="color:#f59e0b; font-size:14px;">${late}</strong></td>
+          <td style="padding:14px;"><strong style="color:#4f46e5; font-size:14px;">${halfDay}</strong></td>
+          <td style="padding:14px;"><strong style="color:#ef4444; font-size:14px;">${absent}</strong></td>
+          <td style="padding:14px;"><strong style="color:#0284c7; font-size:14px;">${moveCount} trips</strong></td>
+          <td style="padding:14px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <div style="flex:1; height:9px; background:#e2e8f0; border-radius:10px; overflow:hidden; min-width:100px;">
                 <div style="height:100%; width:${pct}%; background:#10b981;"></div>
               </div>
-              <strong>${pct}%</strong>
+              <strong style="font-size:14px;">${pct}%</strong>
             </div>
           </td>
         `;
